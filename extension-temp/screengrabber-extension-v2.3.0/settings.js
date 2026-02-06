@@ -1,6 +1,6 @@
 // Settings page logic for ScreenGrabber
 
-const API_URL = 'https://screengrabber.cloud/api/trpc';
+const API_URL = 'https://scrollframe.tech/api';
 
 // Load saved license key on page load
 document.addEventListener('DOMContentLoaded', async () => {
@@ -24,9 +24,9 @@ document.getElementById('validateBtn').addEventListener('click', async () => {
     return;
   }
   
-  // Validate format
-  if (!licenseKey.startsWith('SG-') || licenseKey.length !== 39) {
-    showMessage('Invalid license key format. Should be: SG-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', 'error');
+  // Validate format - accept both old SG- format and new SCROLLFRAME-PRO- format
+  if (!licenseKey.startsWith('SG-') && !licenseKey.startsWith('SCROLLFRAME-PRO-')) {
+    showMessage('Invalid license key format', 'error');
     return;
   }
   
@@ -38,7 +38,7 @@ document.getElementById('validateBtn').addEventListener('click', async () => {
   
   try {
     // Call the validation API
-    const response = await fetch(`${API_URL}/license.validate`, {
+    const response = await fetch(`${API_URL}/license/validate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
