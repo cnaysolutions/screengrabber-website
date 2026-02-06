@@ -1041,7 +1041,7 @@ function showUpgradePrompt() {
   
   if (upgradeBtn) {
     upgradeBtn.addEventListener('click', () => {
-      window.open('https://screengrabber.cloud/#pricing', '_blank');
+      window.open('https://scrollframe.tech/#pricing', '_blank');
     });
   }
   
