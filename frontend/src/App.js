@@ -340,7 +340,7 @@ const UserMenu = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur rounded-full hover:bg-white/20 transition-all"
+        className="flex items-center gap-2 px-4 py-2 bg-orange-50 border border-orange-200 rounded-full hover:bg-orange-100 transition-all"
         data-testid="user-menu-button"
       >
         {user.picture ? (
