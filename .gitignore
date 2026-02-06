@@ -4,7 +4,6 @@ node_modules
 .env
 *.log
 .DS_Store
-vercel-deploy/node_modules/@next/swc-linux-arm64-gnu/next-swc.linux-arm64-gnu.node
-vercel-deploy/node_modules/@next/swc-linux-arm64-musl/next-swc.linux-arm64-musl.node
+.ruff_cache
 node_modules/@next/swc-linux-arm64-gnu/next-swc.linux-arm64-gnu.node
 node_modules/@next/swc-linux-arm64-musl/next-swc.linux-arm64-musl.node
