@@ -333,7 +333,7 @@ export default function Home() {
               </div>
               <div className="flex justify-center mb-8">
                 <a
-                  href="/screengrabber-extension-v2.3.0.zip"
+                  href="/api/download-extension"
                   download="screengrabber-extension-v2.3.0.zip"
                   className="inline-flex items-center gap-3 px-10 py-5 bg-orange-500 hover:bg-orange-600 text-white text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                   data-testid="download-extension-btn"
