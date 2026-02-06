@@ -4,14 +4,16 @@ import React, { useState, useEffect } from 'react'
 import { User, Mail, Lock, Eye, EyeOff, X } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
+type AuthMode = 'login' | 'register' | 'forgot' | 'reset'
+
 interface AuthModalProps {
   isOpen: boolean
   onClose: () => void
-  initialMode?: 'login' | 'register' | 'forgot'
+  initialMode?: AuthMode
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'login' }) => {
-  const [mode, setMode] = useState(initialMode)
+  const [mode, setMode] = useState<AuthMode>(initialMode)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
