@@ -18,10 +18,10 @@ import { UserMenu } from '@/components/UserMenu'
 
 export default function Home() {
   const [showAuthModal, setShowAuthModal] = useState(false)
-  const [authMode, setAuthMode] = useState<'login' | 'register' | 'forgot'>('login')
+  const [authMode, setAuthMode] = useState<'login' | 'register' | 'forgot' | 'reset'>('login')
   const { user } = useAuth()
 
-  const openAuth = (mode: 'login' | 'register' | 'forgot' = 'login') => {
+  const openAuth = (mode: 'login' | 'register' | 'forgot' | 'reset' = 'login') => {
     setAuthMode(mode)
     setShowAuthModal(true)
   }
