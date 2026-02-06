@@ -350,10 +350,10 @@ const UserMenu = () => {
             {user.email.charAt(0).toUpperCase()}
           </div>
         )}
-        <span className="text-white font-medium max-w-[150px] truncate" data-testid="user-email-display">
+        <span className="text-gray-800 font-medium max-w-[150px] truncate" data-testid="user-email-display">
           {user.email}
         </span>
-        <ChevronDown className="w-4 h-4 text-white/80" />
+        <ChevronDown className="w-4 h-4 text-gray-600" />
       </button>
 
       {isOpen && (
