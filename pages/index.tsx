@@ -79,7 +79,8 @@ export default function Home() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <a
-                  href="#download"
+                  href="/screengrabber-extension-v2.3.0.zip"
+                  download="screengrabber-extension-v2.3.0.zip"
                   className="inline-flex items-center gap-2 px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                   data-testid="hero-download-btn"
                 >
