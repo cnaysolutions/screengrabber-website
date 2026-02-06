@@ -1,0 +1,676 @@
+/* ScreenGrabber Content Script Styles */
+
+/* Selection Overlay */
+#screengrabber-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: crosshair;
+}
+
+/* Selection Box */
+.sg-selection-box {
+  position: absolute;
+  border: 2px dashed hsl(25, 95%, 65%);
+  background: rgba(255, 147, 79, 0.1);
+  min-width: 100px;
+  min-height: 100px;
+  cursor: move;
+  box-shadow: 0 0 20px rgba(255, 147, 79, 0.4);
+}
+
+/* Resize Handles */
+.sg-resize-handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: hsl(25, 95%, 65%);
+  border: 2px solid white;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+.sg-resize-handle.sg-nw {
+  top: -6px;
+  left: -6px;
+  cursor: nw-resize;
+}
+
+.sg-resize-handle.sg-ne {
+  top: -6px;
+  right: -6px;
+  cursor: ne-resize;
+}
+
+.sg-resize-handle.sg-sw {
+  bottom: -6px;
+  left: -6px;
+  cursor: sw-resize;
+}
+
+.sg-resize-handle.sg-se {
+  bottom: -6px;
+  right: -6px;
+  cursor: se-resize;
+}
+
+/* Move Handle */
+.sg-move-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: hsl(25, 95%, 65%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Size Indicator */
+.sg-size-indicator {
+  position: absolute;
+  top: -30px;
+  left: 0;
+  background: hsl(25, 95%, 65%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Control Buttons */
+.sg-controls {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 2147483648;
+}
+
+.sg-controls button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sg-confirm {
+  background: hsl(25, 95%, 65%);
+  color: white;
+}
+
+.sg-confirm:hover {
+  background: hsl(25, 95%, 60%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 147, 79, 0.3);
+}
+
+.sg-cancel {
+  background: white;
+  color: #333;
+}
+
+.sg-cancel:hover {
+  background: #f5f5f5;
+  transform: translateY(-2px);
+}
+
+/* Capture Mode UI */
+.sg-capture-mode {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 2147483647;
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sg-recording-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sg-recording-dot {
+  width: 12px;
+  height: 12px;
+  background: hsl(25, 95%, 65%);
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+.sg-frame-counter {
+  font-size: 16px;
+  font-weight: 700;
+  color: hsl(25, 95%, 65%);
+}
+
+.sg-capture-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.sg-capture-controls button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sg-view-captures-btn {
+  background: hsl(25, 95%, 65%);
+  color: white;
+}
+
+.sg-view-captures-btn:hover {
+  background: hsl(25, 95%, 60%);
+}
+
+.sg-pause-btn {
+  background: hsl(45, 100%, 60%);
+  color: white;
+}
+
+.sg-pause-btn:hover {
+  background: hsl(45, 100%, 55%);
+}
+
+.sg-stop-btn {
+  background: hsl(0, 70%, 60%);
+  color: white;
+}
+
+.sg-stop-btn:hover {
+  background: hsl(0, 70%, 55%);
+}
+
+/* Active Capture Region - FIXED POSITION */
+.sg-active-region {
+  position: fixed;
+  border: 3px solid hsl(25, 95%, 65%);
+  background: transparent;
+  pointer-events: none;
+  z-index: 2147483646;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.15);
+}
+
+/* Pulsing border animation */
+.sg-active-region::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border: 3px dashed hsl(25, 95%, 65%);
+  animation: dash 20s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+/* Sidebar */
+.sg-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 380px;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  z-index: 2147483646; /* High z-index but below control panel */
+  display: flex;
+  flex-direction: column;
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.sg-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: hsl(25, 95%, 65%);
+  color: white;
+  border-bottom: 2px solid hsl(25, 95%, 55%);
+}
+
+.sg-sidebar-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+}
+
+.sg-sidebar-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.sg-sidebar-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.sg-sidebar-actions {
+  padding: 12px 16px;
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.sg-sidebar-actions button {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Nunito', sans-serif;
+}
+
+.sg-sidebar-actions button:hover {
+  background: #f3f4f6;
+  border-color: hsl(25, 95%, 65%);
+  color: hsl(25, 95%, 55%);
+}
+
+.sg-frames-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  max-height: calc(100vh - 140px); /* Subtract header + actions height */
+  min-height: 200px;
+}
+
+.sg-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #9ca3af;
+}
+
+.sg-empty-state p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.sg-hint {
+  font-size: 12px !important;
+  color: #d1d5db !important;
+}
+
+.sg-frame-item {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s;
+}
+
+.sg-frame-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sg-frame-number {
+  font-size: 12px;
+  font-weight: 700;
+  color: hsl(25, 95%, 55%);
+  margin-bottom: 8px;
+}
+
+.sg-frame-image {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 8px;
+}
+
+.sg-frame-annotation {
+  width: 100%;
+  min-height: 60px;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: 'Nunito', sans-serif;
+  resize: vertical;
+  margin-bottom: 8px;
+  transition: border-color 0.2s;
+}
+
+.sg-frame-annotation:focus {
+  outline: none;
+  border-color: hsl(25, 95%, 65%);
+  box-shadow: 0 0 0 3px rgba(255, 147, 79, 0.1);
+}
+
+.sg-frame-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.sg-frame-actions button {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Nunito', sans-serif;
+}
+
+.sg-frame-actions button:hover {
+  background: #f3f4f6;
+  border-color: hsl(25, 95%, 65%);
+}
+
+/* Capture Flash Effect */
+.sg-capture-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 147, 79, 0.3);
+  z-index: 2147483645;
+  pointer-events: none;
+  animation: flash 0.3s ease-out;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Notification */
+.sg-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 2147483648;
+  opacity: 0;
+  transition: all 0.3s ease-out;
+}
+
+.sg-notification-show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.sg-notification-success {
+  border-left: 4px solid #10b981;
+  color: #059669;
+}
+
+.sg-notification-error {
+  border-left: 4px solid #ef4444;
+  color: #dc2626;
+}
+
+.sg-notification-info {
+  border-left: 4px solid hsl(25, 95%, 65%);
+  color: hsl(25, 95%, 45%);
+}
+
+/* Upgrade Modal Styles */
+#sg-upgrade-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.sg-upgrade-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sg-fadeIn 0.3s ease;
+}
+
+.sg-upgrade-content {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: sg-slideUp 0.3s ease;
+}
+
+.sg-upgrade-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+.sg-upgrade-content h2 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.sg-upgrade-content p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.sg-reset-info {
+  font-size: 14px !important;
+  color: #888 !important;
+  font-style: italic;
+}
+
+.sg-upgrade-features {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 24px 0;
+  text-align: left;
+}
+
+.sg-feature {
+  font-size: 15px;
+  color: #333;
+  padding: 8px 0;
+  font-weight: 500;
+}
+
+.sg-upgrade-price {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px;
+  border-radius: 12px;
+  margin: 24px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.sg-price-label {
+  display: block;
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 4px;
+}
+
+.sg-price-amount {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 8px;
+}
+
+.sg-price-original {
+  text-decoration: line-through;
+  opacity: 0.7;
+  font-size: 18px;
+}
+
+.sg-upgrade-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.sg-upgrade-buttons button {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.sg-btn-upgrade {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+
+.sg-btn-upgrade:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
+}
+
+.sg-btn-settings {
+  background: #667eea;
+  color: white;
+}
+
+.sg-btn-settings:hover {
+  background: #5568d3;
+  transform: translateY(-2px);
+}
+
+.sg-btn-close {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.sg-btn-close:hover {
+  background: #e0e0e0;
+}
+
+@keyframes sg-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sg-slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

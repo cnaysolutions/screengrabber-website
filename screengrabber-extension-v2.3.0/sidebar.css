@@ -1,0 +1,339 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, hsl(25, 100%, 97%) 0%, hsl(25, 100%, 94%) 100%);
+  color: #333;
+  overflow-x: hidden;
+}
+
+.sidebar-container {
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  position: sticky;
+  top: 0;
+  background: linear-gradient(135deg, hsl(25, 100%, 97%) 0%, hsl(25, 100%, 94%) 100%);
+  padding: 10px 0;
+  z-index: 100;
+}
+
+h1 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: hsl(25, 95%, 65%);
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: white;
+  color: hsl(25, 95%, 65%);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.icon-btn:hover {
+  background: hsl(25, 100%, 98%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255, 147, 79, 0.2);
+}
+
+.icon-btn:active {
+  transform: translateY(0);
+}
+
+/* Copy Dropdown */
+.copy-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 8px;
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 1000;
+  min-width: 200px;
+}
+
+.copy-dropdown.show {
+  display: flex;
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #333;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: hsl(25, 100%, 96%);
+  color: hsl(25, 95%, 65%);
+}
+
+.dropdown-item svg {
+  flex-shrink: 0;
+}
+
+/* Frames Container */
+.frames-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-state svg {
+  margin-bottom: 20px;
+  opacity: 0.6;
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.empty-state .hint {
+  font-size: 14px;
+  color: #999;
+}
+
+/* Frame Card */
+.frame-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  cursor: move;
+  animation: frameSlideIn 0.3s ease;
+}
+
+@keyframes frameSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.frame-card:hover {
+  box-shadow: 0 4px 16px rgba(255, 147, 79, 0.15);
+  transform: translateY(-2px);
+}
+
+.frame-card.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.frame-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.frame-number {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: hsl(25, 95%, 65%);
+}
+
+.frame-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.frame-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 6px;
+  background: hsl(25, 100%, 96%);
+  color: hsl(25, 95%, 65%);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.frame-btn:hover {
+  background: hsl(25, 95%, 65%);
+  color: white;
+}
+
+.frame-btn.delete:hover {
+  background: hsl(0, 70%, 60%);
+}
+
+.frame-thumbnail {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.frame-thumbnail:hover {
+  transform: scale(1.02);
+}
+
+.frame-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.frame-timestamp {
+  font-size: 12px;
+  color: #999;
+}
+
+.annotation-input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid hsl(25, 100%, 90%);
+  border-radius: 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  color: #333;
+  resize: vertical;
+  min-height: 60px;
+  transition: all 0.2s ease;
+}
+
+.annotation-input:focus {
+  outline: none;
+  border-color: hsl(25, 95%, 65%);
+  box-shadow: 0 0 0 3px rgba(255, 147, 79, 0.1);
+}
+
+.annotation-input::placeholder {
+  color: #bbb;
+}
+
+/* Toast Notification */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: hsl(25, 95%, 65%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 10000;
+}
+
+.toast.show {
+  opacity: 1;
+  animation: toastSlideUp 0.3s ease;
+}
+
+@keyframes toastSlideUp {
+  from {
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Drag and Drop */
+.frame-card.drag-over {
+  border: 2px dashed hsl(25, 95%, 65%);
+  background: hsl(25, 100%, 98%);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(25, 95%, 65%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(25, 95%, 60%);
+}
