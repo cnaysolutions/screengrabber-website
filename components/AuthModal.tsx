@@ -55,7 +55,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
         setSuccess(data.message)
         if (data.debug_token) {
           setResetToken(data.debug_token)
-          setMode('reset' as any)
+          setMode('reset')
         }
       } else if (mode === 'reset') {
         const res = await fetch('/api/auth/reset-password', {
