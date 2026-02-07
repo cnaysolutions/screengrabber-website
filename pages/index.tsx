@@ -323,48 +323,22 @@ export default function Home() {
                     <p className="text-white mb-2">Signed in as:</p>
                     <p className="text-orange-100 font-semibold mb-4" data-testid="pricing-user-email">{user.email}</p>
                     <button
-                      onClick={async () => {
-                        try {
-                          const res = await fetch('/api/stripe/create-checkout', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email: user.email }),
-                          })
-                          const data = await res.json()
-                          if (data.url) {
-                            window.location.href = data.url
-                          }
-                        } catch (error) {
-                          console.error('Checkout error:', error)
-                        }
-                      }}
-                      className="w-full bg-white hover:bg-gray-100 text-orange-600 font-bold py-4 text-lg rounded-xl shadow-lg transition-all"
+                      onClick={() => handleCheckout(user.email)}
+                      disabled={checkoutLoading}
+                      className="w-full bg-white hover:bg-gray-100 text-orange-600 font-bold py-4 text-lg rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       data-testid="upgrade-pro-btn"
                     >
-                      Upgrade to Pro
+                      {checkoutLoading ? 'Loading...' : 'Upgrade to Pro'}
                     </button>
                   </div>
                 ) : (
                   <button
-                    onClick={async () => {
-                      try {
-                        const res = await fetch('/api/stripe/create-checkout', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({}),
-                        })
-                        const data = await res.json()
-                        if (data.url) {
-                          window.location.href = data.url
-                        }
-                      } catch (error) {
-                        console.error('Checkout error:', error)
-                      }
-                    }}
-                    className="w-full bg-white hover:bg-gray-100 text-orange-600 font-bold py-4 text-lg rounded-xl shadow-lg transition-all"
+                    onClick={() => handleCheckout()}
+                    disabled={checkoutLoading}
+                    className="w-full bg-white hover:bg-gray-100 text-orange-600 font-bold py-4 text-lg rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     data-testid="pricing-sign-in-btn"
                   >
-                    Get Pro Now
+                    {checkoutLoading ? 'Loading...' : 'Get Pro Now'}
                   </button>
                 )}
                 <p className="text-center text-orange-100 text-sm mt-4">Price increases to €39.99 on April 1, 2026</p>
