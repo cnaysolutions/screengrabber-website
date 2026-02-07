@@ -1017,6 +1017,12 @@ function showUpgradePrompt() {
           <span class="sg-price-original">€39.99</span>
         </div>
         
+        <div class="sg-license-input-wrapper" id="sg-license-wrapper" style="display: none; margin: 15px 0;">
+          <input type="text" id="sg-license-input" placeholder="SCROLLFRAME-PRO-XXXXXXXX" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; text-align: center; font-family: monospace;">
+          <button id="sg-activate-license" style="width: 100%; margin-top: 10px; padding: 12px; background: #22c55e; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Activate License</button>
+          <p id="sg-license-status" style="margin-top: 8px; font-size: 12px; color: #666;"></p>
+        </div>
+        
         <div class="sg-upgrade-buttons">
           <button class="sg-btn-upgrade" id="sg-upgrade-btn">
             🎯 Upgrade to Pro
@@ -1038,6 +1044,10 @@ function showUpgradePrompt() {
   const upgradeBtn = document.getElementById('sg-upgrade-btn');
   const settingsBtn = document.getElementById('sg-settings-btn');
   const continueBtn = document.getElementById('sg-continue-free');
+  const licenseWrapper = document.getElementById('sg-license-wrapper');
+  const licenseInput = document.getElementById('sg-license-input');
+  const activateBtn = document.getElementById('sg-activate-license');
+  const licenseStatus = document.getElementById('sg-license-status');
   
   if (upgradeBtn) {
     upgradeBtn.addEventListener('click', () => {
@@ -1047,7 +1057,68 @@ function showUpgradePrompt() {
   
   if (settingsBtn) {
     settingsBtn.addEventListener('click', () => {
-      chrome.runtime.openOptionsPage();
+      // Toggle license input visibility
+      if (licenseWrapper.style.display === 'none') {
+        licenseWrapper.style.display = 'block';
+        settingsBtn.textContent = '❌ Cancel';
+        licenseInput.focus();
+      } else {
+        licenseWrapper.style.display = 'none';
+        settingsBtn.textContent = '⚙️ Enter License Key';
+      }
+    });
+  }
+  
+  if (activateBtn) {
+    activateBtn.addEventListener('click', async () => {
+      const licenseKey = licenseInput.value.trim();
+      if (!licenseKey) {
+        licenseStatus.textContent = 'Please enter a license key';
+        licenseStatus.style.color = '#ef4444';
+        return;
+      }
+      
+      activateBtn.textContent = 'Validating...';
+      activateBtn.disabled = true;
+      
+      try {
+        const response = await fetch('https://scrollframe.tech/api/license/validate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ licenseKey: licenseKey })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.result && data.result.data && data.result.data.valid) {
+          // License is valid - save it
+          chrome.storage.local.set({
+            licenseKey: licenseKey,
+            isPro: true,
+            proValidatedAt: Date.now()
+          });
+          
+          licenseStatus.textContent = '✅ License activated! Enjoy unlimited frames!';
+          licenseStatus.style.color = '#22c55e';
+          
+          // Remove modal after 1.5 seconds
+          setTimeout(() => {
+            modal.remove();
+            isPaused = false;
+            showNotification('Pro activated! You now have unlimited frames!', 'success');
+          }, 1500);
+        } else {
+          licenseStatus.textContent = '❌ Invalid or expired license key';
+          licenseStatus.style.color = '#ef4444';
+          activateBtn.textContent = 'Activate License';
+          activateBtn.disabled = false;
+        }
+      } catch (error) {
+        licenseStatus.textContent = '❌ Could not validate. Check your connection.';
+        licenseStatus.style.color = '#ef4444';
+        activateBtn.textContent = 'Activate License';
+        activateBtn.disabled = false;
+      }
     });
   }
   
