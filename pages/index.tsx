@@ -19,11 +19,34 @@ import { UserMenu } from '@/components/UserMenu'
 export default function Home() {
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [authMode, setAuthMode] = useState<'login' | 'register' | 'forgot' | 'reset'>('login')
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
   const { user } = useAuth()
 
   const openAuth = (mode: 'login' | 'register' | 'forgot' | 'reset' = 'login') => {
     setAuthMode(mode)
     setShowAuthModal(true)
+  }
+
+  const handleCheckout = async (email?: string) => {
+    setCheckoutLoading(true)
+    try {
+      const res = await fetch('/api/stripe/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email || '' }),
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        alert('Error: ' + (data.error || 'Could not create checkout session'))
+      }
+    } catch (error) {
+      console.error('Checkout error:', error)
+      alert('Failed to connect to payment system. Please try again.')
+    } finally {
+      setCheckoutLoading(false)
+    }
   }
 
   return (
