@@ -52,11 +52,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
           body: JSON.stringify({ email })
         })
         const data = await res.json()
-        setSuccess(data.message)
-        if (data.debug_token) {
-          setResetToken(data.debug_token)
-          setMode('reset')
-        }
+        // Email service not yet configured - show manual reset option
+        setSuccess('Password reset is not available yet. Please contact support@scrollframe.tech or create a new account.')
       } else if (mode === 'reset') {
         const res = await fetch('/api/auth/reset-password', {
           method: 'POST',
