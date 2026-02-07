@@ -20,17 +20,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const session = await stripe.checkout.sessions.retrieve(session_id)
 
     if (session.payment_status === 'paid') {
-      // Generate license key
+      // Check if license already exists for this payment
+      const { data: existingLicense } = await supabaseAdmin
+        .from('licenses')
+        .select('key')
+        .eq('stripe_payment_id', session.payment_intent as string)
+        .single()
+
+      if (existingLicense) {
+        // Return existing license key
+        return res.status(200).json({
+          success: true,
+          licenseKey: existingLicense.key,
+          email: session.customer_email,
+        })
+      }
+
+      // Generate new license key
       const licenseKey = `SCROLLFRAME-PRO-${crypto.randomBytes(8).toString('hex').toUpperCase()}`
 
       // Store in database
-      await supabaseAdmin.from('licenses').insert({
+      const { error: insertError } = await supabaseAdmin.from('licenses').insert({
         key: licenseKey,
         active: true,
         stripe_payment_id: session.payment_intent as string,
         purchase_price: session.amount_total,
         currency: session.currency?.toUpperCase() || 'EUR',
       })
+
+      if (insertError) {
+        console.error('Failed to insert license:', insertError)
+        return res.status(500).json({ error: 'Failed to create license: ' + insertError.message })
+      }
 
       return res.status(200).json({
         success: true,
