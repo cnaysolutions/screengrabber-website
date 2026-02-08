@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import {
   Download,
   Play,
@@ -19,13 +20,24 @@ import { UserMenu } from '@/components/UserMenu'
 export default function Home() {
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [authMode, setAuthMode] = useState<'login' | 'register' | 'forgot' | 'reset'>('login')
+  const [resetToken, setResetToken] = useState('')
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const { user } = useAuth()
+  const router = useRouter()
 
   const openAuth = (mode: 'login' | 'register' | 'forgot' | 'reset' = 'login') => {
     setAuthMode(mode)
     setShowAuthModal(true)
   }
+
+  useEffect(() => {
+    if (!router.isReady) return
+    const token = typeof router.query.reset === 'string' ? router.query.reset : ''
+    if (token) {
+      setResetToken(token)
+      openAuth('reset')
+    }
+  }, [router.isReady, router.query.reset])
 
   const handleCheckout = async (email?: string) => {
     setCheckoutLoading(true)
@@ -199,8 +211,8 @@ export default function Home() {
                   <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold text-orange-600">
                     {step.num}
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{step.title}</h3>
-                  <p className="text-sm text-gray-600">{step.desc}</p>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{step.title}</h3>
+                  <p className="text-gray-600">{step.desc}</p>
                 </div>
               ))}
             </div>
@@ -208,163 +220,115 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="py-24 px-6 bg-white relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-orange-50/50 to-transparent"></div>
-          <div className="max-w-7xl mx-auto relative">
+        <section id="features" className="py-24 px-6">
+          <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16 animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 rounded-full text-green-700 text-sm font-semibold mb-4">
-                <CheckCircle className="w-4 h-4" />
-                <span>Latest Version v2.3.0</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-100 rounded-full text-orange-600 text-sm font-semibold mb-4">
+                <Zap className="w-4 h-4" />
+                <span>Powerful Features</span>
               </div>
-              <h2 className="text-5xl font-bold text-gray-900 mb-4">What&apos;s Been Fixed</h2>
+              <h2 className="text-5xl font-bold text-gray-900 mb-4">Everything You Need</h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                We listened to your feedback and fixed the major issues
+                Built for productivity and seamless workflow integration
               </p>
             </div>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
-                <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mb-6">
-                  <MousePointerClick className="w-8 h-8 text-orange-600" />
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: Copy,
+                  title: 'Bulk Copy',
+                  desc: 'Copy all frames with annotations in one click',
+                },
+                {
+                  icon: MousePointerClick,
+                  title: 'Smart Selection',
+                  desc: 'Select any region of any website to capture',
+                },
+                {
+                  icon: Clock,
+                  title: 'Auto Capture',
+                  desc: 'Automatically captures frames as you scroll',
+                },
+              ].map((feature, i) => (
+                <div key={i} className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <feature.icon className="w-12 h-12 text-orange-500 mb-4" />
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{feature.desc}</p>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Frames Always Visible</h3>
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  Fixed the bug where captured frames weren&apos;t showing in the sidebar. Now every frame appears instantly as you scroll—no more empty sidebar!
-                </p>
-                <div className="mt-6 flex items-center gap-2 text-green-600 font-semibold">
-                  <CheckCircle className="w-5 h-5" />
-                  <span>Fixed in v2.2.0</span>
-                </div>
-              </div>
-              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
-                <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mb-6">
-                  <Copy className="w-8 h-8 text-orange-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Clear All Works</h3>
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  The &quot;Clear All&quot; button now properly removes all frames when starting a new capture session. Fresh start every time!
-                </p>
-                <div className="mt-6 flex items-center gap-2 text-green-600 font-semibold">
-                  <CheckCircle className="w-5 h-5" />
-                  <span>Fixed in v2.2.0</span>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="py-24 px-6 bg-white relative">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16 animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-100 rounded-full text-orange-600 text-sm font-semibold mb-4">
-                <Zap className="w-4 h-4" />
-                <span>Limited Time Offer</span>
-              </div>
-              <h2 className="text-5xl font-bold text-gray-900 mb-4">Upgrade to Pro</h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Get unlimited frames and support the development of ScreenGrabber
-              </p>
+        <section id="pricing" className="py-24 px-6 bg-gradient-to-b from-white to-orange-50/30">
+          <div className="max-w-6xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-100 rounded-full text-orange-600 text-sm font-semibold mb-4">
+              <Sparkles className="w-4 h-4" />
+              <span>Pricing</span>
             </div>
-            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-              {/* Free Plan */}
-              <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
-                <div className="mb-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Free</h3>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-bold text-gray-900">€0</span>
-                  </div>
-                </div>
-                <ul className="space-y-4 mb-8">
-                  {['10 frames per session', 'Basic annotations', 'Copy individual frames'].map((feature) => (
-                    <li key={feature} className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-600">{feature}</span>
-                    </li>
-                  ))}
+            <h2 className="text-5xl font-bold text-gray-900 mb-4">Choose Your Plan</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-12">
+              Simple pricing for everyone — upgrade anytime
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Free</h3>
+                <p className="text-gray-600 mb-6">Great for trying out</p>
+                <div className="text-5xl font-bold text-gray-900 mb-6">$0</div>
+                <ul className="text-left space-y-3 text-gray-600">
+                  <li>✅ 5 frames per day</li>
+                  <li>✅ Basic annotations</li>
+                  <li>✅ Standard support</li>
                 </ul>
-                <a
-                  href="#download"
-                  className="block w-full text-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold rounded-xl transition-colors"
-                >
-                  Download Free
-                </a>
               </div>
 
-              {/* Pro Plan */}
-              <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-8 shadow-2xl border-2 border-orange-400 relative overflow-hidden">
-                <div className="absolute top-4 right-4 bg-white text-orange-600 px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  Until March 31
+              <div className="bg-white rounded-2xl p-8 shadow-xl border-2 border-orange-500 relative">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                  Most Popular
                 </div>
-                <div className="mb-6">
-                  <h3 className="text-2xl font-bold text-white mb-2">Pro - Lifetime</h3>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-bold text-white">€19.99</span>
-                    <span className="text-xl text-orange-100 line-through">€39.99</span>
-                  </div>
-                  <p className="text-orange-100 text-sm mt-2">Early Bird Special - Save €20.00!</p>
-                </div>
-                <ul className="space-y-4 mb-8">
-                  {[
-                    { text: 'Unlimited frames', bold: true },
-                    { text: 'Advanced annotations', bold: false },
-                    { text: 'Copy all frames at once', bold: false },
-                    { text: 'Lifetime updates', bold: false },
-                    { text: 'Priority support', bold: false },
-                  ].map((feature) => (
-                    <li key={feature.text} className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
-                      <span className={`text-white ${feature.bold ? 'font-semibold' : ''}`}>{feature.text}</span>
-                    </li>
-                  ))}
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Pro</h3>
+                <p className="text-gray-600 mb-6">Unlimited power</p>
+                <div className="text-5xl font-bold text-gray-900 mb-6">$9/mo</div>
+                <ul className="text-left space-y-3 text-gray-600 mb-6">
+                  <li>✅ Unlimited frames</li>
+                  <li>✅ Advanced annotations</li>
+                  <li>✅ Priority support</li>
                 </ul>
-                {user ? (
-                  <div className="text-center">
-                    <p className="text-white mb-2">Signed in as:</p>
-                    <p className="text-orange-100 font-semibold mb-4" data-testid="pricing-user-email">{user.email}</p>
-                    <button
-                      onClick={() => handleCheckout(user.email)}
-                      disabled={checkoutLoading}
-                      className="w-full bg-white hover:bg-gray-100 text-orange-600 font-bold py-4 text-lg rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                      data-testid="upgrade-pro-btn"
-                    >
-                      {checkoutLoading ? 'Loading...' : 'Upgrade to Pro'}
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => handleCheckout()}
-                    disabled={checkoutLoading}
-                    className="w-full bg-white hover:bg-gray-100 text-orange-600 font-bold py-4 text-lg rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    data-testid="pricing-sign-in-btn"
-                  >
-                    {checkoutLoading ? 'Loading...' : 'Get Pro Now'}
-                  </button>
-                )}
-                <p className="text-center text-orange-100 text-sm mt-4">Price increases to €39.99 on April 1, 2026</p>
+                <button
+                  onClick={() => handleCheckout(user?.email)}
+                  disabled={checkoutLoading}
+                  className="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-all disabled:opacity-50"
+                >
+                  {checkoutLoading ? 'Processing...' : 'Upgrade to Pro'}
+                </button>
               </div>
             </div>
           </div>
         </section>
 
         {/* Download Section */}
-        <section id="download" className="py-24 px-6 bg-gradient-to-b from-white to-orange-50/50">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-2xl p-12 border border-gray-100">
-              <div className="text-center mb-8">
-                <h2 className="text-4xl font-bold text-gray-900 mb-4">Ready to Get Started?</h2>
-                <p className="text-xl text-gray-600">
-                  Download ScreenGrabber v2.3.0 and start capturing scrolling screenshots
+        <section id="download" className="py-24 px-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-5xl font-bold text-gray-900 mb-4">Download Extension</h2>
+              <p className="text-xl text-gray-600">
+                Install ScreenGrabber in minutes
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div className="space-y-6">
+                <p className="text-gray-700 text-lg">
+                  Click the button below to download the latest version of the Chrome extension.
                 </p>
-              </div>
-              <div className="flex justify-center mb-8">
                 <a
                   href="https://github.com/cnaysolutions/screengrabber-website/raw/main/public/screengrabber-extension-v2.3.0.zip"
                   download="screengrabber-extension-v2.3.0.zip"
-                  className="inline-flex items-center gap-3 px-10 py-5 bg-orange-500 hover:bg-orange-600 text-white text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                  data-testid="download-extension-btn"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
                 >
-                  <Download className="w-6 h-6" />
+                  <Download className="w-5 h-5" />
                   Download Extension v2.3.0
                 </a>
               </div>
@@ -408,6 +372,7 @@ export default function Home() {
           isOpen={showAuthModal}
           onClose={() => setShowAuthModal(false)}
           initialMode={authMode}
+          initialResetToken={resetToken}
         />
       </div>
     </>

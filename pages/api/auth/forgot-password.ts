@@ -14,6 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || req.headers.origin || 'http://localhost:3000'
     // Check if user exists
     const { data: user } = await supabaseAdmin
       .from('users')
@@ -48,8 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({ 
       message: 'If an account with this email exists, a password reset link has been sent.',
-      // Remove in production:
-      debug_token: resetToken
+      reset_url: `${baseUrl}/?reset=${resetToken}`
     })
   } catch (error: any) {
     console.error('Forgot password error:', error)
