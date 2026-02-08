@@ -58,11 +58,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         const res = await fetch('/api/auth/forgot-password', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
+          body: JSON.stringify({ email }),
         })
         const data = await res.json()
+
         if (res.ok) {
           setSuccess(data.message || 'If an account with this email exists, a password reset link has been sent.')
+          // In dev, API may return reset_url to help testing
           setResetLink(data.reset_url || '')
         } else {
           setError(data.error || 'Failed to send reset link')
@@ -71,7 +73,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         const res = await fetch('/api/auth/reset-password', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: resetToken, new_password: newPassword })
+          body: JSON.stringify({ token: resetToken, new_password: newPassword }),
         })
         if (res.ok) {
           setSuccess('Password reset successfully! You can now log in.')
@@ -90,8 +92,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   if (!isOpen) return null
 
+  // This is safe: only shows the debug link when API returns it (dev)
+  const showDevResetLink = Boolean(resetLink)
+
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
       <div
         className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}
@@ -120,18 +128,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && (
-            <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm" data-testid="auth-error">
+            <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg text-sm">
               {error}
             </div>
           )}
+
           {success && (
-            <div className="bg-green-50 text-green-600 px-4 py-3 rounded-lg text-sm" data-testid="auth-success">
+            <div className="bg-green-50 text-green-700 px-4 py-3 rounded-lg text-sm">
               {success}
             </div>
           )}
-          {resetLink && (
+
+          {showDevResetLink && (
             <div className="bg-orange-50 text-orange-700 px-4 py-3 rounded-lg text-sm">
-              Reset link (for testing):{' '}
+              Reset link (dev only):{' '}
               <a className="underline break-all" href={resetLink} target="_blank" rel="noreferrer">
                 {resetLink}
               </a>
@@ -140,16 +150,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           {mode === 'register' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
                   placeholder="Your name"
-                  data-testid="auth-name-input"
+                  required
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -157,17 +168,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           {(mode === 'login' || mode === 'register' || mode === 'forgot') && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                  placeholder="your@email.com"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                  placeholder="you@example.com"
                   required
-                  data-testid="auth-email-input"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -175,22 +186,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           {(mode === 'login' || mode === 'register') && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                  placeholder="••••••••"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                  placeholder="Your password"
                   required
-                  data-testid="auth-password-input"
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  disabled={isLoading}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -200,109 +212,99 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           {mode === 'reset' && (
             <>
-              {!resetToken && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Reset Token</label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      type="text"
-                      value={resetToken}
-                      onChange={(e) => setResetToken(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                      placeholder="Paste reset token"
-                      required
-                      data-testid="auth-reset-token-input"
-                    />
-                  </div>
-                </div>
-              )}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                    placeholder="••••••••"
-                    required
-                    minLength={6}
-                    data-testid="auth-new-password-input"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Reset Token</label>
+                <input
+                  type="text"
+                  value={resetToken}
+                  onChange={(e) => setResetToken(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                  placeholder="Token from reset link"
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-all"
+                  placeholder="New password"
+                  required
+                  disabled={isLoading}
+                />
               </div>
             </>
-          )}
-
-          {mode === 'login' && (
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => setMode('forgot')}
-                className="text-sm text-orange-600 hover:text-orange-700 font-medium"
-                data-testid="forgot-password-link"
-              >
-                Forgot password?
-              </button>
-            </div>
           )}
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all disabled:opacity-50"
-            data-testid="auth-submit-btn"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? 'Please wait...' : (
-              <>
-                {mode === 'login' && 'Sign In'}
-                {mode === 'register' && 'Create Account'}
-                {mode === 'forgot' && 'Send Reset Link'}
-                {mode === 'reset' && 'Reset Password'}
-              </>
+              mode === 'login' ? 'Sign In' :
+              mode === 'register' ? 'Create Account' :
+              mode === 'forgot' ? 'Send Reset Link' :
+              'Reset Password'
             )}
           </button>
 
-          {(mode === 'login' || mode === 'register') && (
-            <div className="text-center pt-4 border-t">
-              <p className="text-gray-600 text-sm">
-                {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}{' '}
+          <div className="text-center space-y-2">
+            {mode === 'login' && (
+              <>
                 <button
                   type="button"
-                  onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
-                  className="text-orange-600 hover:text-orange-700 font-semibold"
-                  data-testid="auth-mode-toggle"
+                  onClick={() => setMode('forgot')}
+                  className="text-sm text-orange-600 hover:text-orange-700"
+                  disabled={isLoading}
                 >
-                  {mode === 'login' ? 'Sign Up' : 'Sign In'}
+                  Forgot password?
                 </button>
-              </p>
-            </div>
-          )}
+                <div className="text-sm text-gray-600">
+                  Don&apos;t have an account?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setMode('register')}
+                    className="text-orange-600 hover:text-orange-700 font-medium"
+                    disabled={isLoading}
+                  >
+                    Sign up
+                  </button>
+                </div>
+              </>
+            )}
 
-          {mode === 'forgot' && (
-            <div className="text-center pt-4 border-t">
+            {mode === 'register' && (
+              <div className="text-sm text-gray-600">
+                Already have an account?{' '}
+                <button
+                  type="button"
+                  onClick={() => setMode('login')}
+                  className="text-orange-600 hover:text-orange-700 font-medium"
+                  disabled={isLoading}
+                >
+                  Sign in
+                </button>
+              </div>
+            )}
+
+            {mode === 'forgot' && (
               <button
                 type="button"
                 onClick={() => setMode('login')}
-                className="text-orange-600 hover:text-orange-700 font-semibold text-sm"
+                className="text-sm text-orange-600 hover:text-orange-700"
+                disabled={isLoading}
               >
                 Back to Sign In
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </form>
       </div>
     </div>
   )
 }
-
-export default AuthModal
