@@ -24,7 +24,7 @@ export default function PrivacyPolicyPage() {
         </p>
 
         <p>
-          Scrollframe (“we”, “our”, “us”) respects your privacy. This Privacy
+          Scrollframe (we) respects your privacy. This Privacy
           Policy explains how the Scrollframe browser extension and website
           operate and how we handle user data.
         </p>
